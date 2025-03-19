@@ -89,6 +89,8 @@ OdometryServer::OdometryServer(const rclcpp::NodeOptions &options)
     rclcpp::QoS qos((rclcpp::SystemDefaultsQoS().keep_last(1).durability_volatile()));
     odom_publisher_ = create_publisher<nav_msgs::msg::Odometry>("/genz/odometry", qos);
     traj_publisher_ = create_publisher<nav_msgs::msg::Path>("/genz/trajectory", qos);
+    alpha_publisher_ = create_publisher<std_msgs::msg::Float64>("/genz/alpha", qos);
+
     path_msg_.header.frame_id = odom_frame_;
     if (publish_debug_clouds_) {
         map_publisher_ = create_publisher<sensor_msgs::msg::PointCloud2>("/genz/local_map", qos);
@@ -133,6 +135,18 @@ void OdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSha
 
     // Register frame, main entry point to GenZ-ICP pipeline
     const auto &[planar_points, non_planar_points] = odometry_.RegisterFrame(points, timestamps);
+
+    // Compute alpha
+    double alpha = 0.0;
+    if (!planar_points.empty() || !non_planar_points.empty()) {
+        alpha = static_cast<double>(planar_points.size()) /
+                static_cast<double>(planar_points.size() + non_planar_points.size());
+    }
+
+    // Publish alpha value
+    auto alpha_msg = std_msgs::msg::Float64();
+    alpha_msg.data = alpha;
+    alpha_publisher_->publish(alpha_msg);
 
     // Compute the pose using GenZ, ego-centric to the LiDAR
     const Sophus::SE3d genz_pose = odometry_.poses().back();
@@ -201,6 +215,7 @@ void OdometryServer::PublishClouds(const rclcpp::Time &stamp,
         map_publisher_->publish(std::move(EigenToPointCloud2(genz_map, odom_header)));
         planar_points_publisher_->publish(std::move(EigenToPointCloud2(planar_points, cloud_header)));
         non_planar_points_publisher_->publish(std::move(EigenToPointCloud2(non_planar_points, cloud_header)));
+        
 
         return;
     }

@@ -41,3 +41,4 @@ find_external_dependecy("Eigen3" "Eigen3::Eigen" "${CMAKE_CURRENT_LIST_DIR}/eige
 find_external_dependecy("Sophus" "Sophus::Sophus" "${CMAKE_CURRENT_LIST_DIR}/sophus/sophus.cmake")
 find_external_dependecy("TBB" "TBB::tbb" "${CMAKE_CURRENT_LIST_DIR}/tbb/tbb.cmake")
 find_external_dependecy("tsl-robin-map" "tsl::robin_map" "${CMAKE_CURRENT_LIST_DIR}/tsl_robin/tsl_robin.cmake")
+find_external_dependecy("fmt" "fmt::fmt" "${CMAKE_CURRENT_LIST_DIR}/fmt/fmt.cmake")

@@ -87,7 +87,7 @@ mkdir -p ~/colcon_ws/src
 cd ~/colcon_ws/src
 git clone https://github.com/cocel-postech/genz-icp.git
 cd ..
-colcon build --packages-select genz_icp --cmake-args -DCMAKE_BUILD_TYPE=Release
+colcon build --packages-select genz_icp --cmake-args -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_FMT=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON --symlink-install 
 source ~/colcon_ws/install/setup.bash
 ```
 
@@ -103,6 +103,10 @@ and then,
 
 ```sh
 ros2 bag play <rosbag_file_name>.mcap
+```
+or, run with bag file like this:
+```sh
+ros2 launch genz_icp odometry.launch.py topic:=<topic_name> bagfile:=/<bagfile_location>
 ```
 
 Check out the tuning guide for the parameters of GenZ-ICP at this [link][tuning_guide_link]

@@ -23,5 +23,5 @@
 add_library(metrics STATIC)
 add_library(genz_icp::metrics ALIAS metrics)
 target_sources(metrics PRIVATE Metrics.cpp)
-target_link_libraries(metrics PUBLIC Eigen3::Eigen)
+target_link_libraries(metrics PUBLIC Eigen3::Eigen fmt::fmt)
 set_global_target_properties(metrics)
